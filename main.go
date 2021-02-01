@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/2336260845/hippo_search/client"
 	"github.com/2336260845/hippo_search/config"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -15,9 +16,12 @@ func ginEngineInit() *gin.Engine {
 }
 
 func configInit() *config.Config {
-	cf := config.ParseConfig()
-	if cf.Address == "" {
-		cf.Address = "0.0.0.0:8999"
+	config.InitConfig()
+
+	cf := config.GetConfig()
+
+	if cf.HttpAddress == "" {
+		cf.HttpAddress = "0.0.0.0:8999"
 	}
 
 	b, _ := json.Marshal(cf)
@@ -30,7 +34,9 @@ func main() {
 	r := ginEngineInit()
 	conf := configInit()
 
-	if err := r.Run(conf.Address); err != nil {
+	client.ThriftInit(conf)
+
+	if err := r.Run(conf.HttpAddress); err != nil {
 		panic(fmt.Sprintf("server run error, err=%s", err.Error()))
 	}
 }

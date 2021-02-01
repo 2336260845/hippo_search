@@ -11,16 +11,44 @@ const (
 )
 
 type Config struct {
-	Version      string       `json:"version"`
-	Address      string       `json:"address"`
-	ServerConfig ServerConfig `json:"server_config"` //TODO 有问题，结构体无法解析
+	HasParse     bool          `json:"-"`
+	Version      string        `json:"version"`
+	HttpAddress  string        `json:"httpAddress"`
+	ServerConfig *ServerConfig `json:"server_config"` //TODO 有问题，下划线命名不识别
+	TimeCircle   TimeCircle
 }
 
 type ServerConfig struct {
-	Address string `json:"address"`
+	QueryAddress  string `json:"queryAddress"`
+	RecallAddress string `json:"recallAddress"`
 }
 
-func ParseConfig() *Config {
+type TimeCircle struct {
+	QueryCut int
+}
+
+var conf *Config
+
+func InitConfig() {
+	if conf != nil && conf.HasParse {
+		logrus.Warnf("InitConfig has parse config, config=%+v", conf)
+		return
+	}
+
+	cf := parseConfig()
+	if err := checkConfig(cf); err != nil {
+		panic(fmt.Sprintf("InitConfig checkConfig error, err=%+v", err.Error()))
+	}
+
+	conf = cf
+	cf.HasParse = true
+}
+
+func GetConfig() *Config {
+	return conf
+}
+
+func parseConfig() *Config {
 	cf := Config{}
 
 	viper.SetConfigName("config")
@@ -39,4 +67,12 @@ func ParseConfig() *Config {
 
 	logrus.Infof("ParseConfig config=%+v", cf)
 	return &cf
+}
+
+func checkConfig(conf *Config) error {
+	if conf.TimeCircle.QueryCut < 5 {
+		return fmt.Errorf("query cut time is too little, time=%+v", conf.TimeCircle.QueryCut)
+	}
+
+	return nil
 }
