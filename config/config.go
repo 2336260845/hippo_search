@@ -22,6 +22,7 @@ type Config struct {
 type ServerConfig struct {
 	QueryAddress  string `json:"queryAddress"`
 	RecallAddress string `json:"recallAddress"`
+	RankAddress   string `json:"rankAddress"`
 }
 
 type TimeCircle struct {

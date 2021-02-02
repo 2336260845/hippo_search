@@ -13,5 +13,5 @@ struct Doc {
 }
 
 service RankService {
-    list<Doc> recall(1:RankParam param)
+    list<Doc> rank(1:RankParam param)
 }

@@ -571,7 +571,7 @@ func (p *Doc) String() string {
 type RankService interface {
 	// Parameters:
 	//  - Param
-	Recall(ctx context.Context, param *RankParam) (r []*Doc, err error)
+	Rank(ctx context.Context, param *RankParam) (r []*Doc, err error)
 }
 
 type RankServiceClient struct {
@@ -602,11 +602,11 @@ func (p *RankServiceClient) Client_() thrift.TClient {
 
 // Parameters:
 //  - Param
-func (p *RankServiceClient) Recall(ctx context.Context, param *RankParam) (r []*Doc, err error) {
-	var _args5 RankServiceRecallArgs
+func (p *RankServiceClient) Rank(ctx context.Context, param *RankParam) (r []*Doc, err error) {
+	var _args5 RankServiceRankArgs
 	_args5.Param = param
-	var _result6 RankServiceRecallResult
-	if err = p.Client_().Call(ctx, "recall", &_args5, &_result6); err != nil {
+	var _result6 RankServiceRankResult
+	if err = p.Client_().Call(ctx, "rank", &_args5, &_result6); err != nil {
 		return
 	}
 	return _result6.GetSuccess(), nil
@@ -633,7 +633,7 @@ func (p *RankServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFuncti
 func NewRankServiceProcessor(handler RankService) *RankServiceProcessor {
 
 	self7 := &RankServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
-	self7.processorMap["recall"] = &rankServiceProcessorRecall{handler: handler}
+	self7.processorMap["rank"] = &rankServiceProcessorRank{handler: handler}
 	return self7
 }
 
@@ -656,16 +656,16 @@ func (p *RankServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.
 
 }
 
-type rankServiceProcessorRecall struct {
+type rankServiceProcessorRank struct {
 	handler RankService
 }
 
-func (p *rankServiceProcessorRecall) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := RankServiceRecallArgs{}
+func (p *rankServiceProcessorRank) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := RankServiceRankArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("recall", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("rank", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -673,12 +673,12 @@ func (p *rankServiceProcessorRecall) Process(ctx context.Context, seqId int32, i
 	}
 
 	iprot.ReadMessageEnd()
-	result := RankServiceRecallResult{}
+	result := RankServiceRankResult{}
 	var retval []*Doc
 	var err2 error
-	if retval, err2 = p.handler.Recall(ctx, args.Param); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing recall: "+err2.Error())
-		oprot.WriteMessageBegin("recall", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.Rank(ctx, args.Param); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing rank: "+err2.Error())
+		oprot.WriteMessageBegin("rank", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -686,7 +686,7 @@ func (p *rankServiceProcessorRecall) Process(ctx context.Context, seqId int32, i
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("recall", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("rank", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -708,27 +708,27 @@ func (p *rankServiceProcessorRecall) Process(ctx context.Context, seqId int32, i
 
 // Attributes:
 //  - Param
-type RankServiceRecallArgs struct {
+type RankServiceRankArgs struct {
 	Param *RankParam `thrift:"param,1" db:"param" json:"param"`
 }
 
-func NewRankServiceRecallArgs() *RankServiceRecallArgs {
-	return &RankServiceRecallArgs{}
+func NewRankServiceRankArgs() *RankServiceRankArgs {
+	return &RankServiceRankArgs{}
 }
 
-var RankServiceRecallArgs_Param_DEFAULT *RankParam
+var RankServiceRankArgs_Param_DEFAULT *RankParam
 
-func (p *RankServiceRecallArgs) GetParam() *RankParam {
+func (p *RankServiceRankArgs) GetParam() *RankParam {
 	if !p.IsSetParam() {
-		return RankServiceRecallArgs_Param_DEFAULT
+		return RankServiceRankArgs_Param_DEFAULT
 	}
 	return p.Param
 }
-func (p *RankServiceRecallArgs) IsSetParam() bool {
+func (p *RankServiceRankArgs) IsSetParam() bool {
 	return p.Param != nil
 }
 
-func (p *RankServiceRecallArgs) Read(iprot thrift.TProtocol) error {
+func (p *RankServiceRankArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
 	}
@@ -767,7 +767,7 @@ func (p *RankServiceRecallArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *RankServiceRecallArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *RankServiceRankArgs) ReadField1(iprot thrift.TProtocol) error {
 	p.Param = &RankParam{}
 	if err := p.Param.Read(iprot); err != nil {
 		return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Param), err)
@@ -775,8 +775,8 @@ func (p *RankServiceRecallArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *RankServiceRecallArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("recall_args"); err != nil {
+func (p *RankServiceRankArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("rank_args"); err != nil {
 		return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
 	}
 	if p != nil {
@@ -793,7 +793,7 @@ func (p *RankServiceRecallArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *RankServiceRecallArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *RankServiceRankArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("param", thrift.STRUCT, 1); err != nil {
 		return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:param: ", p), err)
 	}
@@ -806,33 +806,33 @@ func (p *RankServiceRecallArgs) writeField1(oprot thrift.TProtocol) (err error) 
 	return err
 }
 
-func (p *RankServiceRecallArgs) String() string {
+func (p *RankServiceRankArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("RankServiceRecallArgs(%+v)", *p)
+	return fmt.Sprintf("RankServiceRankArgs(%+v)", *p)
 }
 
 // Attributes:
 //  - Success
-type RankServiceRecallResult struct {
+type RankServiceRankResult struct {
 	Success []*Doc `thrift:"success,0" db:"success" json:"success,omitempty"`
 }
 
-func NewRankServiceRecallResult() *RankServiceRecallResult {
-	return &RankServiceRecallResult{}
+func NewRankServiceRankResult() *RankServiceRankResult {
+	return &RankServiceRankResult{}
 }
 
-var RankServiceRecallResult_Success_DEFAULT []*Doc
+var RankServiceRankResult_Success_DEFAULT []*Doc
 
-func (p *RankServiceRecallResult) GetSuccess() []*Doc {
+func (p *RankServiceRankResult) GetSuccess() []*Doc {
 	return p.Success
 }
-func (p *RankServiceRecallResult) IsSetSuccess() bool {
+func (p *RankServiceRankResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *RankServiceRecallResult) Read(iprot thrift.TProtocol) error {
+func (p *RankServiceRankResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
 	}
@@ -871,7 +871,7 @@ func (p *RankServiceRecallResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *RankServiceRecallResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *RankServiceRankResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return thrift.PrependError("error reading list begin: ", err)
@@ -891,8 +891,8 @@ func (p *RankServiceRecallResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *RankServiceRecallResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("recall_result"); err != nil {
+func (p *RankServiceRankResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("rank_result"); err != nil {
 		return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
 	}
 	if p != nil {
@@ -909,7 +909,7 @@ func (p *RankServiceRecallResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *RankServiceRecallResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *RankServiceRankResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err)
@@ -932,9 +932,9 @@ func (p *RankServiceRecallResult) writeField0(oprot thrift.TProtocol) (err error
 	return err
 }
 
-func (p *RankServiceRecallResult) String() string {
+func (p *RankServiceRankResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("RankServiceRecallResult(%+v)", *p)
+	return fmt.Sprintf("RankServiceRankResult(%+v)", *p)
 }

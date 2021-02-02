@@ -3,7 +3,8 @@
   "httpAddress": "0.0.0.0:8999",
   "serverConfig": {
     "queryAddress": "0.0.0.0:7890",
-    "recallAddress": "0.0.0.0:7891"
+    "recallAddress": "0.0.0.0:7891",
+    "rankAddress": "0.0.0.0:7892"
   },
   "timeCircle": {
     "queryCut": 20
