@@ -7,5 +7,10 @@
   },
   "timeCircle": {
     "queryCut": 20
+  },
+  "skipModule": {
+    "skipQueryAnalysis": true,
+    "skipRecall": false,
+    "skilRank": false
   }
 }

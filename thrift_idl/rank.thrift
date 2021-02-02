@@ -1,5 +1,5 @@
-struct RecallParam {
-    1: required string query,
+struct RankParam {
+    1: required list<Doc> docs,
     2: map<string, string> extra
 }
 
@@ -12,6 +12,6 @@ struct Doc {
     6: map<string, string> extra
 }
 
-service RecallService {
-    list<Doc> recall(1:RecallParam param)
+service RankService {
+    list<Doc> recall(1:RankParam param)
 }

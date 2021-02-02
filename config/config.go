@@ -16,6 +16,7 @@ type Config struct {
 	HttpAddress  string        `json:"httpAddress"`
 	ServerConfig *ServerConfig `json:"server_config"` //TODO 有问题，下划线命名不识别
 	TimeCircle   TimeCircle
+	SkipModule   SkipModule
 }
 
 type ServerConfig struct {
@@ -25,6 +26,12 @@ type ServerConfig struct {
 
 type TimeCircle struct {
 	QueryCut int
+}
+
+type SkipModule struct {
+	SkipQueryAnalysis bool
+	SkipRecall        bool
+	SkipRank          bool
 }
 
 var conf *Config

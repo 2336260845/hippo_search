@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"github.com/2336260845/hippo_search/client"
+	"github.com/2336260845/hippo_search/config"
 	"github.com/2336260845/hippo_search/gen-go/query_analysis"
 	"github.com/2336260845/hippo_search/gen-go/recall"
 	"github.com/gin-gonic/gin"
@@ -25,35 +26,36 @@ func QuerySearch(c *gin.Context) {
 
 	if query == "" {
 		//TODO 空结果可以反馈一些推荐结果
-		c.JSON(200, gin.H{
-
-		})
+		c.JSON(200, gin.H{})
 		return
 	}
 
 	//切词
-	param := &query_analysis.QueryParam{Query: query, Analysis: analysisModel}
-	if client.GetAllClient().QueryAnalysisClient == nil {
-		c.JSON(500, gin.H{
-			"message": "QueryAnalysisClient is nil",
-		})
-		return
+	if !config.GetConfig().SkipModule.SkipQueryAnalysis {
+		param := &query_analysis.QueryParam{Query: query, Analysis: analysisModel}
+		if client.GetAllClient().QueryAnalysisClient == nil {
+			c.JSON(500, gin.H{
+				"message": "QueryAnalysisClient is nil",
+			})
+			return
+		}
+
+		res, err := client.GetAllClient().QueryAnalysisClient.QueryAnalysis(context.Background(), param)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		logrus.Infof("QuerySearch res=%+v", res)
 	}
 
-	res, err := client.GetAllClient().QueryAnalysisClient.QueryAnalysis(context.Background(), param)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-		})
-		return
-	}
+	//TODO 召回
 
-	//召回
-	logrus.Infof("QuerySearch res=%+v", res)
+	//TODO rank
 
-	c.JSON(200, gin.H{
-
-	})
+	c.JSON(200, gin.H{})
 }
 
 func QueryAnalysisDebug(c *gin.Context) {
@@ -124,4 +126,8 @@ func RecallDebug(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"data": res,
 	})
+}
+
+func RankDebug(c *gin.Context) {
+
 }

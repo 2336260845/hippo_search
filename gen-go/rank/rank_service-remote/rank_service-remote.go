@@ -7,7 +7,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/2336260845/hippo_search/gen-go/recall"
+	"github.com/2336260845/hippo_search/gen-go/rank"
 	"github.com/apache/thrift/lib/go/thrift"
 	"math"
 	"net"
@@ -17,13 +17,13 @@ import (
 	"strings"
 )
 
-var _ = recall.GoUnusedProtection__
+var _ = rank.GoUnusedProtection__
 
 func Usage() {
 	fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " [-h host:port] [-u url] [-f[ramed]] function [arg1 [arg2...]]:")
 	flag.PrintDefaults()
 	fmt.Fprintln(os.Stderr, "\nFunctions:")
-	fmt.Fprintln(os.Stderr, "   recall(RecallParam param)")
+	fmt.Fprintln(os.Stderr, "   recall(RankParam param)")
 	fmt.Fprintln(os.Stderr)
 	os.Exit(0)
 }
@@ -138,7 +138,7 @@ func main() {
 	}
 	iprot := protocolFactory.GetProtocol(trans)
 	oprot := protocolFactory.GetProtocol(trans)
-	client := recall.NewRecallServiceClient(thrift.NewTStandardClient(iprot, oprot))
+	client := rank.NewRankServiceClient(thrift.NewTStandardClient(iprot, oprot))
 	if err := trans.Open(); err != nil {
 		fmt.Fprintln(os.Stderr, "Error opening socket to ", host, ":", port, " ", err)
 		os.Exit(1)
@@ -150,19 +150,19 @@ func main() {
 			fmt.Fprintln(os.Stderr, "Recall requires 1 args")
 			flag.Usage()
 		}
-		arg9 := flag.Arg(1)
-		mbTrans10 := thrift.NewTMemoryBufferLen(len(arg9))
-		defer mbTrans10.Close()
-		_, err11 := mbTrans10.WriteString(arg9)
-		if err11 != nil {
+		arg10 := flag.Arg(1)
+		mbTrans11 := thrift.NewTMemoryBufferLen(len(arg10))
+		defer mbTrans11.Close()
+		_, err12 := mbTrans11.WriteString(arg10)
+		if err12 != nil {
 			Usage()
 			return
 		}
-		factory12 := thrift.NewTJSONProtocolFactory()
-		jsProt13 := factory12.GetProtocol(mbTrans10)
-		argvalue0 := recall.NewRecallParam()
-		err14 := argvalue0.Read(jsProt13)
-		if err14 != nil {
+		factory13 := thrift.NewTJSONProtocolFactory()
+		jsProt14 := factory13.GetProtocol(mbTrans11)
+		argvalue0 := rank.NewRankParam()
+		err15 := argvalue0.Read(jsProt14)
+		if err15 != nil {
 			Usage()
 			return
 		}

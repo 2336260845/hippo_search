@@ -14,4 +14,7 @@ func SearchRegister(engine *gin.Engine) {
 
 	//召回debug接口
 	engine.GET("/search/recall/debug", handler.RecallDebug)
+
+	//rank debug接口
+	engine.GET("/search/rank/debug", handler.RankDebug)
 }

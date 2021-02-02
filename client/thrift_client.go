@@ -26,29 +26,6 @@ func ThriftInit(conf *config.Config) {
 	go thriftClient.thriftClientDo(conf)
 }
 
-//query分析 thrift client
-func newQueryAnalysisServiceClient(conf *config.Config) (client *query_analysis.QueryAnalysisServiceClient, err error) {
-	transportFactory := thrift.NewTBufferedTransportFactory(8192)
-	protocolFactory := thrift.NewTCompactProtocolFactory()
-
-	transport, err := thrift.NewTSocket(conf.ServerConfig.QueryAddress)
-	if err != nil {
-		return nil, fmt.Errorf("NewQueryAnalysisServiceClient NewTSocket error, err=%+v", err.Error())
-	}
-
-	useTransport, err := transportFactory.GetTransport(transport)
-	if err != nil {
-		return nil, fmt.Errorf("NewQueryAnalysisServiceClient GetTransport error, err=%+v", err.Error())
-	}
-
-	client = query_analysis.NewQueryAnalysisServiceClientFactory(useTransport, protocolFactory)
-	if err := transport.Open(); err != nil {
-		return nil, fmt.Errorf("NewQueryAnalysisServiceClient NewQueryAnalysisServiceClientFactory error, err=%+v", err.Error())
-	}
-
-	return client, nil
-}
-
 func newRecallServiceClient(conf *config.Config) (client *recall.RecallServiceClient, err error) {
 	transportFactory := thrift.NewTBufferedTransportFactory(8192)
 	protocolFactory := thrift.NewTCompactProtocolFactory()

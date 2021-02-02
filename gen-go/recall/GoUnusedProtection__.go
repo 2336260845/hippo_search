@@ -3,5 +3,4 @@
 
 package recall
 
-var GoUnusedProtection__ int;
-
+var GoUnusedProtection__ int
